@@ -1,0 +1,10 @@
+management:
+  security:
+    enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: health, env, metrics, info, auditevents, prometheus, flyway
+
+spring:
+  flyway.locations: classpath:/db/local

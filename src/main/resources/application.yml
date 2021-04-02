@@ -1,0 +1,24 @@
+spring:
+  datasource:
+    url: ${DATASOURCE_URL:${db-url:jdbc:postgresql://localhost:5432/docker_test}}
+    username: ${POSTGRES_USER:${DATASOURCE_USERNAME:${db-user:}}}
+    password: ${POSTGRES_PASSWORD:${DATASOURCE_PASSWORD:${db-pass:}}}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL10Dialect
+        jdbc.lob.non_contextual_creation: true
+        format_sql: true
+        # Format the generated SQL statements to make it more readable
+        # Prevent LazyInitializationException being thrown from hibernate when fetching associations outside a
+        # session. With this value active, hibernate will create temporary sessions when an lazy loaded entity
+        # wasn't fetched in the initial query. This will work, but it's far better to use a DTO projection or
+        # a JOIN FETCH query to retrieve the data
+        enable_lazy_load_no_trans: true
+    hibernate.ddl-auto: ${ddl-auto:none}
+    generate-ddl: false
+    show-sql: ${show-sql:false}
+
+server:
+  port: ${PORT:8080}

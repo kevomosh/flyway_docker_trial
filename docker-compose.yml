@@ -1,0 +1,37 @@
+version: '3.3'
+services:
+  web:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: docker-test:1.0.0
+    environment:
+      DATASOURCE_PASSWORD: ${DB_PASS:-password}
+      DATASOURCE_URL: ${DB_URL:-jdbc:postgresql://postgres:5432/docker_test}
+      DATASOURCE_USERNAME: ${DB_USER:-postgres}
+      DDL_AUTO:
+      PORT: 8080
+      SHOW_SQL: "${SHOW_SQL:-true}"
+      SPRING_PROFILES_ACTIVE: ${ACTIVE_PROFILE:-local}
+    command: []
+    volumes:
+      - ./docker_entrypoint.sh:/docker_entrypoint.sh
+      - ./src/main/resources/application-local.yml:/app/config/application-local.yml:ro
+      - ./src/main/resources/application.yml:/app/config/application.yml:ro
+      - ./src/main/resources/db:/db
+      - ./build/libs/docker_flyway-0.0.1-SNAPSHOT.jar:/app/app.jar
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    ports:
+      - 8080:8080
+  postgres:
+    image: postgres:13.2
+    environment:
+      POSTGRES_DB: docker_test
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+volumes:
+  pgdata: {}
